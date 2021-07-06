@@ -1,0 +1,1184 @@
+ECOMMERCE
+
+Module 1 PROJECT SETUP AND TEMPLATES
+1.  Inside your ecommerce folder create virtual environment
+        python3 -m venv venv
+2.  Activate your venv
+        source venv/bin/activate
+3.  Install Djago
+        pip install Django
+4.  Create new django project name ecommerce
+        django-admin startproject ecommerce
+5.  Change your directory to new created django project
+        cd ecommerce
+6.  Create new django app name store
+        python manage.py startapp store
+7   Add the new created APP store into your PROJECT ecommerce settings.py INSTALLED_APPS
+        INSTALLED_APPS = [
+            'django.contrib.admin',
+            ...
+            'store.apps.StoreConfig',
+        ]
+8.  Inside your APP store create directory templates/store
+9.  Inside your new created directory templates/store create 4 html file with h3 tag with text of the html name except for main.html
+        * main.html
+        * store.html
+        * cart.html
+        * checkout.html
+10. Create view for the 3 html file
+    Go to store view.py
+        from django.views.generic import TemplateView
+        class StoreView(TemplateView):
+            template_name = 'store/store.html'
+        class CartView(TemplateView):
+            template_name = 'store/cart.html'
+        class CheckoutView(TemplateView):
+            template_name = 'store/checkout.html'
+11. Create urls.py inside your APP store
+    Inside your new created urls.py
+        from django.urls import path
+        from .views import StoreView, CartView, CheckoutView
+        urlpatterns = [
+            path('', StoreView.as_view(), name='store'),
+            path('cart/', CartView.as_view(), name='cart'),
+            path('checkout/', CheckoutView.as_view(), name='checkout'),
+        ]
+12. Next go to your PROJECT ecommerce urls.py and import include
+        from django.urls import path, include
+    Then inside urlpatterns add
+        path('', include('store.urls')),
+13. Try to run the server
+        python manage.py runserver
+14. Create a static directory inside the root directory ecommerce
+    Inside the static directory create a subdirectory called css and images
+    Inside the css directory create main.css
+    Inside th main.css insert
+        body {
+          background-color: blue;
+        }
+15. Go to PROJECT ecommerce settings.py and configure the static directory
+        STATICFILE_DIRS = [
+            os.path.join(BASE_DIR, 'static')
+        ]
+16. Inside your html file load the static for css
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+17. Edit the main.html
+        <!DOCTYPE html>
+        {% load static %}
+        <html lang="en" dir="ltr">
+          <head>
+            <meta charset="utf-8">
+            <title>Ecom</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+          	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+          </head>
+          <body>
+
+            <h1>Navbar</h1>
+
+            <div class="container">
+              {% block content %}
+              {% endblock content %}
+            </div>
+
+            <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+          	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+          	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+          </body>
+        </html>
+18. Go to the cart.html, checkout.html and store.html then extends the main.html
+        {% extends 'store/main.html' %}
+        {% load static %}
+        {% block content %}
+          <h3>Store</h3>
+        {% endblock content %}
+19. Go back to the main.html and add nav inside the body
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <a class="navbar-brand" href="{% url 'store' %}">Ecom</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="{% url 'store' %}">Store <span class="sr-only">(current)</span></a>
+              </li>
+            </ul>
+            <div class="form-inline my-2 my-lg-0">
+              <a href="#"class="btn btn-warning">Login</a>
+              <a href="{% url 'cart' %}">
+                <img  id="cart-icon" src="{% static 'images/cart.png' %}">
+              </a>
+              <p id="cart-total">0</p>
+            </div>
+          </div>
+        </nav>
+20. Go to store.html and add the config div for row and column inside the block content
+        <div class="row">
+          <div class="col-lg-4">
+            <img class="thumbnail" src="{% static 'images/placeholder.png' %}">
+            <div class="box-element product">
+              <h6><strong>Product</strong></h6>
+              <hr>
+              <button class="btn btn-outline-secondary add-btn">Add to Cart</button>
+              <a class="btn btn-outline-success" href="#">View</a>
+              <h4 style="display: inline-block; float: right;" >$20</h4>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <img class="thumbnail" src="{% static 'images/placeholder.png' %}">
+            <div class="box-element product">
+              <h6><strong>Product</strong></h6>
+              <hr>
+              <button class="btn btn-outline-secondary add-btn">Add to Cart</button>
+              <a class="btn btn-outline-success" href="#">View</a>
+              <h4 style="display: inline-block; float: right;" >$20</h4>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <img class="thumbnail" src="{% static 'images/placeholder.png' %}">
+            <div class="box-element product">
+              <h6><strong>Product</strong></h6>
+              <hr>
+              <button class="btn btn-outline-secondary add-btn">Add to Cart</button>
+              <a class="btn btn-outline-success" href="#">View</a>
+              <h4 style="display: inline-block; float: right;" >$20</h4>
+            </div>
+          </div>
+        </div>
+21. GO to cart.html and add the config inside the block content
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="box-element">
+              <a class="btn btn-outline-dark" href="{% url 'store' %}">&#x2190; Continue Shopping</a>
+              <br>
+              <br>
+              <table class="table">
+                <tr>
+                  <th><h5>Item: <strong>3</strong></h5></th>
+                  <th><h5>Total: <strong>$43</strong></h5></th>
+                  <th>
+                    <a style="float: right; margin: 5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
+                  </th>
+                </tr>
+              </table>
+            </div>
+            <br>
+            <div class="box-element">
+              <div class="cart-row">
+                <div style="flex:2"></div>
+                <div style="flex:2"><strong>Item</strong></div>
+                <div style="flex:1"><strong>Price</strong></div>
+                <div style="flex:1"><strong>Quantity</strong></div>
+                <div style="flex:1"><strong>Total</strong></div>
+              </div>
+              <div class="cart-row">
+                <div style="flex:2"><img class="row-image" src="{% static 'images/placeholder.png' %}" alt=""></div>
+                <div style="flex:2">Product 1</div>
+                <div style="flex:1">$20</div>
+                <div style="flex:1">
+                  <p class="quantity" >2</p>
+                  <div class="quantity">
+                    <img class="chg-quantity" src="{% static 'images/arrow-up.png' %}">
+                    <img class="chg-quantity" src="{% static 'images/arrow-down.png' %}">
+                  </div>
+                </div>
+                <div style="flex:1">$40</div>
+              </div>
+            </div>
+          </div>
+        </div>
+22. GO to checkout.html and add the config inside the block content
+        {% extends 'store/main.html' %}
+        {% load static %}
+        {% block content %}
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="box-element" id="form-wrapper">
+                <form id="form">
+                  <div id="user-info">
+                    <div class="form-field">
+        							<input required class="form-control" type="text" name="name" placeholder="Name..">
+        						</div>
+        						<div class="form-field">
+        							<input required class="form-control" type="email" name="email" placeholder="Email..">
+        						</div>
+                  </div>
+                  <div id="shipping-info">
+                    <hr>
+        						<p>Shipping Information:</p>
+        						<hr>
+        						<div class="form-field">
+        							<input class="form-control" type="text" name="address" placeholder="Address..">
+        						</div>
+        						<div class="form-field">
+        							<input class="form-control" type="text" name="city" placeholder="City..">
+        						</div>
+        						<div class="form-field">
+        							<input class="form-control" type="text" name="state" placeholder="State..">
+        						</div>
+        						<div class="form-field">
+        							<input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
+        						</div>
+        						<div class="form-field">
+        							<input class="form-control" type="text" name="country" placeholder="Zip code..">
+        						</div>
+                  </div>
+                  <hr>
+                  <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+                </form>
+              </div>
+              <br>
+              <div class="box-element hidden" id="payment-info">
+                <small>Paypal Options</small>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="box-element">
+        			     <a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+        			     <hr>
+        			     <h3>Order Summary</h3>
+        			     <hr>
+        			     <div class="cart-row">
+        			       <div style="flex:2"><img class="row-image" src="{% static 'images/placeholder.png' %}"></div>
+        			       <div style="flex:2">
+        			         <p>Product 1</p>
+        			       </div>
+        			       <div style="flex:1">
+        			         <p>$20.00</p>
+        			       </div>
+        			       <div style="flex:1">
+        			         <p>x2</p>
+        			       </div>
+        			     </div>
+        			     <h5>Items: 2</h5>
+        			     <h5>Total: $4</h5>
+              </div>
+            </div>
+          </div>
+        {% endblock content %}
+
+
+MODULE 2 DATA STRUCTURE
+1. Go to store models.py and import User model
+        from django.contrib.auth.models import User
+   Then create a model class Customer with one-to-one relationship with User
+        class Customer(models.Model):
+           user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+           name = models.CharField(max_length=200, null=True)
+           email = models.EmailField(max_length=200)
+           def __str__(self):
+               return self.name
+   Next create a model for class product
+        class Product(models.Model):
+           name = models.CharField(max_lenght=200)
+           price = models.FloatField()
+           digital = models.BooleanField(default=False, null=True, blank=True)
+           def __str__(self):
+               return self.name
+   Next create a model for class Order with many-to-one relationship in Customer
+        class Order(models.Model):
+           customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+           date_ordered = models.DateTimeField(auto_now_add=True)
+           complete = models.BooleanField(default=False)
+           transaction_id = models.CharField(max_length=100, null=True)
+           def __str__(self):
+               return str(self.id)
+   Next create a model for class OrderItem which will be the summary of items Order
+        class OderItem(models.Model):
+           product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+           order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+           quantity = models.IntegerField(default=0, null=True, blank=True)
+           date_added = models.DateTimeField(auto_now_add=True)
+           def __str__(self):
+               return self.product.name
+   Last create a model for class ShippingAddress that will be a child to Order and will only be created if atleast one order item
+   within an order is a physical product this model will be connect to a customer so a customer can reuse the shipping address in the future
+        class ShippingAddress(models.Model):
+           customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+           order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+           address = models.CharField(max_length=200, null=False)
+           city = models.CharField(max_length=200, null=False)
+           state = models.CharField(max_length=200, null=False)
+           zipcode = models.CharField(max_length=200, null=False)
+           date_added = models.DateTimeField(auto_now_add=True)
+           def __str__(self):
+               return self.address
+2. After creating model do the database migration
+        python manage.py makemigrations
+        python manage.py migrate
+3. Register the model in admin
+   Go to astore admin.py then import the models
+         from .models import (
+             Customer,
+             Product,
+             Order,
+             OderItem,
+             ShippingAddress,
+         )
+   Then register the models
+        admin.site.register(Customer)
+        admin.site.register(Product)
+        admin.site.register(Order)
+        admin.site.register(OderItem)
+        admin.site.register(ShippingAddress)
+4. Create a super user to login into the admin
+        python manage.py createsuperuser
+   Then inside the admin create a 6 Product
+5. After creating the product go to store views.py and import the models
+        from .models import (
+            Customer,
+            Product,
+            Order,
+            OderItem,
+            ShippingAddress,
+        )
+   Then change the StoreView into ListView and add the model
+        class StoreView(ListView):
+           model = Product
+           template_name = 'store/store.html'
+   Next go to store.html and replace the html code with a loop for the objects in the StoreView
+        {% extends 'store/main.html' %}
+        {% load static %}
+        {% block content %}
+         <div class="row">
+           {% for product in object_list %}
+           <div class="col-lg-4">
+             <img class="thumbnail" src="{% static 'images/placeholder.png' %}">
+             <div class="box-element product">
+               <h6><strong>{{ product.name }}</strong></h6>
+               <hr>
+               <button class="btn btn-outline-secondary add-btn">Add to Cart</button>
+               <a class="btn btn-outline-success" href="#">View</a>
+               <h4 style="display: inline-block; float: right;" >${{ product.price|floatformat:2 }}</h4>
+             </div>
+           </div>
+           {% endfor %}
+         </div>
+        {% endblock content %}
+6. Add the image field in the Model class Product
+   Go to store models.py
+        class Product(models.Model):
+           name = models.CharField(max_length=200)
+           price = models.FloatField()
+           digital = models.BooleanField(default=False, null=True, blank=True)
+           image = models.ImageField(null=True, blank=True)
+           def __str__(self):
+               return self.name
+   Next we need to install Pillow since we use the ImageField
+        pip install pillow
+   Then do the migrations
+        python manage.py makemigrations
+        python manage.py migrate
+7. Configure the Media Root and Media URL for the uploaded file
+   Go to PROJECT settings.py
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+   Next configure the URLPATTERNS for the MEDIA for debug mode
+   Go to PROJECT urls.py and import static and settings
+        from django.conf.urls.static import static
+        from django.conf import settings
+   Next add the urlpatterns
+        if settings.DEBUG:
+           urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+8. Then inside the ROOT DIRECTORY create media directory
+   Next upload the image of your product using the django admin
+   Render the image in the template store.html just replace the src of the image into
+        <img class="thumbnail" src="{{ product.image.url }}">
+9. Fix the image url in case it dont have picture
+   Go to store models.py and inside the Model class Product add property and method
+        @property
+        def imageURL(self):
+           try:
+               url = self.image.url
+           except:
+               url = ''
+           return url
+   The change the image src of the store.html
+        <img class="thumbnail" src="{{ product.imageURL }}">
+10. Create a Customer using admin
+    Next create a Order using the Customer we make
+    Next create 2 OrderItem using the Order
+11. Go to store views.py inside the CartView
+        class CartView(TemplateView):
+            template_name = 'store/cart.html'
+            def get_context_data(self, **kwargs):
+                context = super().get_context_data(**kwargs)
+                if self.request.user.is_authenticated:
+                    customer = self.request.user.customer
+                    # Find else Create an Order object
+                    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+                    # Get the all order items
+                    items = order.orderitem_set.all()
+                else:
+                    items = []
+                context['items'] = items
+                return context
+12. Go to cart.html and render the new CartView
+        {% for item in items %}
+          <div class="cart-row">
+            <div style="flex:2"><img class="row-image" src="{{ item.product.imageURL }}" alt=""></div>
+            <div style="flex:2">{{ item.product.name }}</div>
+            <div style="flex:1">${{ item.product.price|floatformat:2 }}</div>
+            <div style="flex:1">
+              <p class="quantity" >{{ item.quantity }}</p>
+              <div class="quantity">
+                <img class="chg-quantity" src="{% static 'images/arrow-up.png' %}">
+                <img class="chg-quantity" src="{% static 'images/arrow-down.png' %}">
+              </div>
+            </div>
+            <div style="flex:1">$40</div>
+          </div>
+        {% endfor %}
+13. Create a method in the store models.py class OrderItem to get the total product
+        @property
+        def get_total(self):
+            total = self.product.price * self.quantity
+            return total
+    Next create a method for class Order
+        @property
+        def get_cart_total(self):
+            orderitems = self.orderitem_set.all()
+            total = sum([item.get_total for item in orderitems])
+            return total
+        @property
+        def get_cart_items(self):
+            orderitems = self.orderitem_set.all()
+            total = sum([item.quantity for item in orderitems])
+            return total
+   Next go to store views.py and inside the class CartView edit the get_context_data
+        def get_context_data(self, **kwargs):
+           context = super().get_context_data(**kwargs)
+           if self.request.user.is_authenticated:
+               customer = self.request.user.customer
+               # Find else Create an Order object
+               order, created = Order.objects.get_or_create(customer=customer, complete=False)
+               # Get the all order items
+               items = order.orderitem_set.all()
+           else:
+               items = []
+               order = {'get_cart_total': 0, 'get_cart_items': 0}
+           context['items'] = items
+           context['order'] = order
+           return context
+   Then go to cart.html and change the total
+      <table class="table">
+        <tr>
+          <th><h5>Item: <strong>{{ order.get_cart_items }}</strong></h5></th>
+          <th><h5>Total: <strong>{{ order.get_cart_total|floatformat:2 }}</strong></h5></th>
+          <th>
+            <a style="float: right; margin: 5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
+          </th>
+        </tr>
+      </table>
+      ...
+      <div style="flex:1">${{ item.get_total }}</div>
+14. Go to store views.py and edit the CheckoutView
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            if self.request.user.is_authenticated:
+                customer = self.request.user.customer
+                # Find else Create an Order object
+                order, created = Order.objects.get_or_create(customer=customer, complete=False)
+                # Get the all order items
+                items = order.orderitem_set.all()
+            else:
+                items = []
+                order = {'get_cart_total': 0, 'get_cart_items': 0}
+            context['items'] = items
+            context['order'] = order
+            return context
+15. Then go to checkout.html and render the new CheckoutView
+        <div class="box-element">
+             <a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+             <hr>
+             <h3>Order Summary</h3>
+             <hr>
+             {% for item in items %}
+               <div class="cart-row">
+                 <div style="flex:2"><img class="row-image" src="{{ item.product.imageURL }}"></div>
+                 <div style="flex:2">
+                   <p>{{ item.product.name }}</p>
+                 </div>
+                 <div style="flex:1">
+                   <p>${{ item.product.price|floatformat:2 }}</p>
+                 </div>
+                 <div style="flex:1">
+                   <p>x{{ item.quantity }}</p>
+                 </div>
+             </div>
+             {% endfor %}
+             <h5>Items: {{ order.get_cart_items }}</h5>
+             <h5>Total: ${{ order.get_cart_total|floatformat:2 }}</h5>
+        </div>
+
+
+SITE FUNCTIONALITY
+PART 1 ADD TO CART
+1. Add Javascript
+   Go to static directory and create js folder
+   Within js directory create a file cart.js
+   Then go to store main.html and add the cart.js
+        <script src="{% static 'js/cart.js' %}"></script>
+2. Add class update-cart so we can use it in our javascript
+   Go to store store.html and add the class and custom attribute in button
+        <button class="btn btn-outline-secondary add-btn update-cart" data-product={{ product.id }} data-action="add">Add to Cart</button>
+3. Create an event handles for the class update-cart and for the moment it will print in console
+   Go to static/js cart.js
+        var updateBtns = document.getElementsByClassName('update-cart');
+        for(var i = 0; i < updateBtns.length; i++){
+         updateBtns[i].addEventListener('click', function(){
+           var productId = this.dataset.product
+           var action = this.dataset.action
+           console.log('productId:', productId, 'action: ', action)
+         });
+        }
+4. Add a script in the head of store main.html that will check if the user is authenticated
+        <script type="text/javascript">
+          var user = '{{request.user}}'
+        </script>
+5. Go to store views.py and create function base view that return JsonResponse
+   First import the JsonResponse
+        from django.http import JsonResponse
+   Next create a function base view updateItem
+        def updateItem(request):
+           return JsonResponse('Item was added', safe=False)
+   Next go to store urls.py and import the updateItem view
+        from .views import StoreView, CartView, CheckoutView, updateItem
+   Then add the urlpatterns
+6. Go to static js cart.js and create a function updateUserOrder
+        function updateUserOrder(productId, action){
+          console.log('User is logged in, sending data');
+          var url = '/update_item/'
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              'productId': productId,
+              'action': action
+            })
+          })
+          .then((response) => {
+            return response.json()
+          })
+          .then((data) => {
+            console.log('data: ', data)
+          })
+        }
+   The change the else statment
+        else {
+          updateUserOrder(productId, action);
+        }
+   Create CSRF token using js see https://docs.djangoproject.com/en/3.2/ref/csrf/
+   Go to store main.html and in the header script add the CSRF token for js
+   But instead to use function getCookie we change it into getToken
+        function getToken(name) {
+           let cookieValue = null;
+           if (document.cookie && document.cookie !== '') {
+               const cookies = document.cookie.split(';');
+               for (let i = 0; i < cookies.length; i++) {
+                   const cookie = cookies[i].trim();
+                   // Does this cookie string begin with the name we want?
+                   if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                       cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                       break;
+                   }
+               }
+           }
+           return cookieValue;
+        }
+        const csrftoken = getToken('csrftoken');
+   Then go back to cart.js and add the csrftoken in the header of function updateUserOrder
+         function updateUserOrder(productId, action){
+           console.log('User is logged in, sending data');
+           var url = '/update_item/'
+           fetch(url, {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+               'X-CSRFToken': csrftoken
+             },
+             body: JSON.stringify({
+               'productId': productId,
+               'action': action
+             })
+           })
+           .then((response) => {
+             return response.json()
+           })
+           .then((data) => {
+             console.log('data: ', data)
+             // RELOAD THE PAGE
+             location.reload()
+           })
+         }
+7. Update the view updateItem so you can add the item in the cart
+   Go to store views.py then import json
+        import json
+   Then inside the function updateItem
+         def updateItem(request):
+             data = json.loads(request.body)
+             productId = data['productId']
+             action = data['action']
+             print(f"productId: {productId}\nAction: {action}")
+             customer = request.user.customer
+             product = Product.objects.get(id=productId)
+             order, created = Order.objects.get_or_create(customer=customer, complete=False)
+             orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+             if action == 'add':
+                 orderItem.quantity += 1
+             elif action == 'remove':
+                 orderItem.quantity -= 1
+             orderItem.save()
+             if orderItem.quantity <= 0:
+                 orderItem.delete()
+             return JsonResponse('Item was added', safe=False)
+8. Update the StoreView so
+   Go to store views.py
+         def get_context_data(self, **kwargs):
+             context = super().get_context_data(**kwargs)
+             if self.request.user.is_authenticated:
+                 customer = self.request.user.customer
+                 order, created = Order.objects.get_or_create(customer=customer, complete=False)
+                 items = order.orderitem_set.all()
+                 cart_items = order.get_cart_items
+             else:
+                 items = []
+                 order = {'get_cart_total': 0, 'get_cart_items': 0}
+                 cart_items = order['get_cart_items']
+             context['items'] = items
+             context['order'] = order
+             context['cart_items'] = cart_items
+             return context
+   In CartView and CheckoutView add the context in if
+          cart_items = order.get_cart_items
+   And in else
+          cart_items = order['get_cart_items']
+   And the context
+          context['cart_items'] = cart_items
+   Then go to main.html and update the p tag with id="cart-total"
+        <p id="cart-total">{{ cart_items }}</p>
+PART 2 UPDATE CART
+9. Add the event handles to the up and down arrow
+   First go to cart.html and add class and custom attribute
+         <img class="chg-quantity update-cart" data-product={{item.product.id}} data-action="add" src="{% static 'images/arrow-up.png' %}">
+         <img class="chg-quantity update-cart" data-product={{item.product.id}} data-action="remove" src="{% static 'images/arrow-down.png' %}">
+PART 3 SHIPPING ADDRESS
+10. Check if the product is digital or not
+    First go to store models.py and add function shipping
+          @property
+          def shipping(self):
+              shipping = False
+              orderitems = self.orderitem_set.all()
+              for i in orderItem:
+                  if i.product.digital == False:
+                      shipping = True
+              return shipping
+   Next go to store views.py and in each view fo StoreView, CartView and CheckoutView add the shipping False
+        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+   Then in checkout.html add javascript in the botom of the body that will hide the shipping information if its not needed
+       <script type="text/javascript">
+         var shipping = '{{order.shipping}}'
+         if(shipping == 'False'){
+           document.getElementById('shipping-info').innerHTML = ''
+         }
+       </script>
+PART 4 SHOW PAYMENT OPTION
+11. When a users add form data and click continue we want to open up the payment options
+    Inside the  checkout.html scrip botom where the var shipping is located add eventlistener
+          var form = document.getElementById('form')
+          form.addEventListener('submit', function(e){
+            e.preventDefault()
+            console.log('Form submitted...')
+            document.getElementById('form-button').classList.add('hidden')
+            document.getElementById('payment-info').classList.remove('hidden')
+            })
+    Then add a button for make payment in the payment option
+    Inside the checkout.html under the PayPal Options add the button
+          <button id="make-payment">Make Payment</button>
+12. Trigger the Payment Action
+    Add another eventlistener for the new button id="make-payment"
+    But for now  lest console out the "Payment button clicked"
+    Go to the checkout.html under the script below the body add another eventlistener
+          document.getElementById('make-payment').addEventListener('click', function(e){
+            submitFormData();
+          });
+          function submitFormData(){
+            console.log('Payment button clicked')
+          }
+13. Hide Form or Fields
+    If the user is logged in Hide the Name and Email Fields
+    If the user is logged in and Item does not need shipping Hide Form and Open Payment Option
+    A logged in user does not need to see the email and name field because we already know base on the account they have
+    First go to checkout.html and in the script under the conditional statement if shipping add another 2 conditional statement
+          if (user != 'AnonymousUser'){
+            document.getElementById('user-info').innerHTML = '';
+          }
+          if (shipping == 'False' && user != 'AnonymousUser'){
+              document.getElementById('form-wrapper').classList.add('hidden');
+              document.getElementById('payment-info').classList.remove('hidden');
+          }
+14. Form Data
+    Next get the cart total and add to the script on below of var shipping
+          var total = '{{order.get_cart_total}}'
+    Then inside the function submitFormData pass some data
+          var userFormData = {
+            'name':null,
+            'email':null,
+            'total':total,
+          }
+          var shipingInfo = {
+            'address':null,
+            'city':null,
+            'state':null,
+            'zipcode':null,
+          }
+          if (shipping != 'False'){
+              shippingInfo.address = form.address.value
+              shippingInfo.city = form.city.value
+              shippingInfo.state = form.state.value
+              shippingInfo.zipcode = form.zipcode.value
+          }
+          if (user != 'AnonymousUser'){
+              userFormData.name = form.name.value
+              userFormData.email = form.email.value
+          }
+PROCESS ORDER
+15. Create view and urlpatterns for the POST request
+    Go to store views.py and add function base views processOrder
+    For now it will return JsonResponse
+          def processOrder(request):
+              return JsonResponse('Payment submitted..', safe=False)
+    Next create URLPATTERNS go to store urls.py and import
+          from .views import StoreView, CartView, CheckoutView, updateItem, processOrder
+    Then add the urlpatterns
+          path('process_order/', processOrder, name='process_order'),
+16. Send the Post request using javascript fetch
+    Go to checkout.url and inside the function submitFormData at the botom add script for fetch
+        var url = '/process_order/'
+        fetch(url, {
+          method:'POST',
+          headers:{
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+          },
+          body:JSON.stringify({
+            'form': userFormData,
+            'shipping': shippingInfo
+          })
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Success: ', data);
+          alert('Transaction completed');
+          window.location.href = "{% url 'store' %}";
+        })
+   Then go back to store views.py and add print to show the data post body
+   Go to function processOrder and add
+        print('Data: ', request.body)
+17. Transaction ID
+    create transaction id using simple time stamp
+    Go to store views.py and import datetime
+          import datetime
+    Next set Transaction ID variable go to function processOrder and replace the print with
+          transaction_id = datetime.datetime.now().timestamp()
+
+
+GUEST USER CART
+1. Change the floatfield in models into decimalfield
+   Go to store models.py
+        price = models.DecimalField(max_digits=15, decimal_places=2)
+   Do the migrations
+        python manage.py makemigrations
+        python manage.py migrate
+PART 1 SET COOKIES
+2. Create cookies using visitors browser
+   Get the cookies value
+   Go to main.html and inside the script in the header add the cookies
+         function getCookie(name) {
+           // Split cookie string and get all individual name=value pairs in an array
+           var cookieArr = document.cookie.split(";");
+
+           // Loop through the array elements
+           for(var i = 0; i < cookieArr.length; i++) {
+               var cookiePair = cookieArr[i].split("=");
+
+               /* Removing whitespace at the beginning of the cookie name
+               and compare it with the given string */
+               if(name == cookiePair[0].trim()) {
+                   // Decode the cookie value and return
+                   return decodeURIComponent(cookiePair[1]);
+               }
+           }
+
+           // Return null if not found
+           return null;
+         }
+         var cart = JSON.parse(getCookie('cart'))
+         console.log('Cart: ', cart)
+3. Create cookies if the value of cookies is null
+        if (cart == undefined){
+          cart = {}
+          console.log('Cart was created')
+          document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+        }
+PART 2 ADD OR REMOVE ITEMS
+4. First go to cart.js and make function addCookieItem
+   For now we will print in console log
+         if (user == 'AnonymousUser') {
+           addCookieItem(productId, action);
+         }
+        ...
+         function addCookieItem(productId, action){
+           console.log('Not logged in..')
+         }
+5. Next inside the addCookieItem add conditional statement that will increase and decrease the value of the cart
+        function addCookieItem(productId, action){
+          console.log('Not logged in..')
+          if ( action == 'add' ){
+            if(cart[productId] == undefined ){
+              cart[productId] = {'quantity':1};
+            }
+            else{
+              cart[productId]['quantity'] += 1;
+            }
+          }
+          else if ( action == 'remove' ) {
+            if ( cart[productId]['quantity'] > 0){
+              cart[productId]['quantity'] -= 1;
+            }
+            else {
+              console.log('Remove Item');
+              delete cart[productId]
+            }
+          }
+          // ADD THE UPDATED CART IN THE COOKIES
+          console.log('Cart: ', cart)
+          document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+          // RELOAD THE PAGE
+          location.reload()
+        }
+RENDER THE CART TOTAL
+6. For now lets edit the CartView
+   Go to store view.py and in CartView add
+         # TRY TO GET THE COOKIE CART
+         try:
+             cart = json.loads(self.request.COOKIES['cart'])
+         except:
+             cart = {}
+         print('Cart: ', cart)
+         items = []
+         order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+         cart_items = order['get_cart_items']
+         # LOOP TO THE EVERY ITEM IN COOKIE CART USING ID AS KEY
+         for i in cart:
+             try:
+                 # UPDATE THE CART INDIVIDUAL ITEM
+                 cart_items += cart[i]['quantity']
+                 # GET THE PRODUCT USING ID
+                 product = Product.objects.get(id=i)
+                 # GET THE TOTAL PRICE
+                 total = product.price * cart[i]['quantity']
+                 # UPDATE THE TOTAL PRICE
+                 order['get_cart_total'] += total
+                 # UPDATE THE TOTAL NUMBER OF CART ITEMS
+                 order['get_cart_items'] += cart[i]['quantity']
+                 # SET THE ITEM INFORMATION
+                 item = {
+                     'product': {
+                         'id': product.id,
+                         'name': product.name,
+                         'price': product.price,
+                         'imageURL': product.imageURL
+                     },
+                     'quantity': cart[i]['quantity'],
+                     'get_total': total
+                 }
+                 # UPDATE THE ITEMS
+                 items.append(item)
+                 # CHECK THE PRODUCT IF NEED TO SHIPPING
+                 if product.digital == False:
+                     order['shipping'] = True
+             except:
+                 pass
+7. Inside the store directory create a file utils.py
+   This utils.py will have function and class that were going to use inside the store views.py
+   We will transfer the cookies and different code
+   First import models and json inside the utils.py
+         import json
+         from .models import (
+             Customer,
+             Product,
+             Order,
+             OrderItem,
+             ShippingAddress,
+         )
+   Then create a function cookieCart with paramaters of request
+   This function is from step 6 we just transfer it
+         def cookieCart(request):
+             # TRY TO GET THE COOKIE CART
+             try:
+                 cart = json.loads(request.COOKIES['cart'])
+             except:
+                 cart = {}
+             print('Cart: ', cart)
+             items = []
+             order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+             cart_items = order['get_cart_items']
+             # LOOP TO THE EVERY ITEM IN COOKIE CART USING ID AS KEY
+             for i in cart:
+                 try:
+                     # UPDATE THE CART INDIVIDUAL ITEM
+                     cart_items += cart[i]['quantity']
+                     # GET THE PRODUCT USING ID
+                     product = Product.objects.get(id=i)
+                     # GET THE TOTAL PRICE
+                     total = product.price * cart[i]['quantity']
+                     # UPDATE THE TOTAL PRICE
+                     order['get_cart_total'] += total
+                     # UPDATE THE TOTAL NUMBER OF CART ITEMS
+                     order['get_cart_items'] += cart[i]['quantity']
+                     # SET THE ITEM INFORMATION
+                     item = {
+                         'product': {
+                             'id': product.id,
+                             'name': product.name,
+                             'price': product.price,
+                             'imageURL': product.imageURL
+                         },
+                         'quantity': cart[i]['quantity'],
+                         'get_total': total
+                     }
+                     # UPDATE THE ITEMS
+                     items.append(item)
+                     # CHECK THE PRODUCT IF NEED TO SHIPPING
+                     if product.digital == False:
+                         order['shipping'] = True
+                 except:
+                     pass
+             return {'cart_items': cart_items, 'order': order, 'items': items}
+  Next go to store views.py and import the function cookieCart from utils.py
+        from .utils import cookieCart
+  Then go to CartView, StoreView, CheckoutView and replace the else statement, NOTE: not all are needed in StoreView
+        else:
+            cookie_data = cookie_cart(self.request)
+            cart_items = cookie_data['cart_items']
+            order = cookie_data['order']
+            items = cookie_data['items']
+8. Transfer all the repeating login in the utils.py
+   First create a function cart_data with paramaters of request
+         def cart_data(request):
+             if request.user.is_authenticated:
+                 customer = request.user.customer
+                 # Find else Create an Order object
+                 order, created = Order.objects.get_or_create(customer=customer, complete=False)
+                 # Get the all order items
+                 items = order.orderitem_set.all()
+                 cart_items = order.get_cart_items
+             else:
+                 cookie_data = cookie_cart(request)
+                 cart_items = cookie_data['cart_items']
+                 order = cookie_data['order']
+                 items = cookie_data['items']
+             return {'cart_items': cart_items, 'order': order, 'items': items}
+   Then in the CheckoutView, CartView and StoreView to use the cart_data function
+         class CheckoutView(TemplateView):
+             template_name = 'store/checkout.html'
+             def get_context_data(self, **kwargs):
+                 context = super().get_context_data(**kwargs)
+                 data = cart_data(self.request)
+                 cart_items = data['cart_items']
+                 order = data['order']
+                 items = data['items']
+                 context['items'] = items
+                 context['order'] = order
+                 context['cart_items'] = cart_items
+                 return context
+CLEAR COOKIES WHENEVER THE USER CHECKOUT
+9. Go to checkout.html and inside the scriptin he fetch promise data
+        .then((data) => {
+          console.log('Success: ', data);
+          alert('Transaction completed');
+          // EMPTY THE COOKIE
+          cart = {};
+          document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+          window.location.href = "{% url 'store' %}";
+        })
+10. Next process the cart cookie data in our views
+    Go to store views.py and inside the function processOrder and in else statement
+          else:
+              print("User is not login...")
+              print('COOKIES', request.COOKIES)
+              name = data['form']['name']
+              email = data['form']['email']
+              data = cookie_cart(request)
+              items = data['items']
+              # GET OR CREATE A CUSTOMER USING THE EMAIL
+              customer, created = Customer.objects.get_or_create(email=email)
+              # SET THE CUSTOMER NAME
+              customer.name = name
+              customer.save()
+              order = Order.objects.create(customer=customer, complete=False)
+              for item in items:
+                  product = Product.objecsts.get(id=item['product']['id'])
+                  orderItem = OrderItem.objects.create(product=product, order=order, quantity=item['quantity'])
+11. Change the location of confirmation for order.save()
+    Coz right now we want to save the processOrder even the user is not authenticated
+          def processOrder(request):
+              transaction_id = datetime.datetime.now().timestamp()
+              data = json.loads(request.body)
+              if request.user.is_authenticated:
+                  customer = request.user.customer
+                  order, created = Order.objects.get_or_create(customer=customer, complete=False)
+              else:
+                  print("User is not login...")
+                  print('COOKIES', request.COOKIES)
+                  name = data['form']['name']
+                  email = data['form']['email']
+                  data = cookie_cart(request)
+                  items = data['items']
+                  # GET OR CREATE A CUSTOMER USING THE EMAIL
+                  customer, created = Customer.objects.get_or_create(email=email)
+                  # SET THE CUSTOMER NAME
+                  customer.name = name
+                  customer.save()
+                  order = Order.objects.create(customer=customer, complete=False)
+                  for item in items:
+                      product = Product.objecsts.get(id=item['product']['id'])
+                      orderItem = OrderItem.objects.create(product=product, order=order, quantity=item['quantity'])
+              total = float(data['form']['total'])
+              order.transaction_id = transaction_id
+              if total == order.get_cart_total:
+                  order.complete = True
+              order.save()
+              if order.shipping == True:
+                  ShippingAddress.objects.create(
+                      customer = customer,
+                      order = order,
+                      address = data['shipping']['address'],
+                      city = data['shipping']['city'],
+                      state = data['shipping']['state'],
+                      zipcode = data['shipping']['zipcode'],
+                  )
+              return JsonResponse('Payment submitted..', safe=False)
+12. Inside the utils.py create a guest check_out function that will be base in guest customer for processOrder
+        def guest_order(request, data):
+            print("User is not login...")
+            print('COOKIES', request.COOKIES)
+            name = data['form']['name']
+            email = data['form']['email']
+            data = cookie_cart(request)
+            items = data['items']
+            # GET OR CREATE A CUSTOMER USING THE EMAIL
+            customer, created = Customer.objects.get_or_create(email=email)
+            # SET THE CUSTOMER NAME
+            customer.name = name
+            customer.save()
+            order = Order.objects.create(customer=customer, complete=False)
+            for item in items:
+                product = Product.objecsts.get(id=item['product']['id'])
+                orderItem = OrderItem.objects.create(product=product, order=order, quantity=item['quantity'])
+            return customer, order
+     Then import it inside the store view.py
+          from .utils import cookie_cart, cart_data, guest_order
+     Next replace it in the else statement for guest user in the processOrder
+           else:
+               customer, order = guest_order(request, data)
+
+
+FIXING CSRF TOKEN IN CHECKOUT FOR INCOGNITO
+1. Go to checkout.html and inside the form add csrftoken
+        <form id="form">
+          {% csrf_token %}
+2. Then inside the checkout.html script
+        csrftoken = form.getElementsByTagName('input')[0].value;
+        console.log('Newtoken: ', csrftoken);
+3. Then uncomment the csrftoken in the main.html
+        // CSRF TOKEN
+        // function getToken(name) {
+        //     let cookieValue = null;
+        //     if (document.cookie && document.cookie !== '') {
+        //         const cookies = document.cookie.split(';');
+        //         for (let i = 0; i < cookies.length; i++) {
+        //             const cookie = cookies[i].trim();
+        //             // Does this cookie string begin with the name we want?
+        //             if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        //                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     return cookieValue;
+        // }
+        // const csrftoken = getToken('csrftoken');
+
+
+INTEGRATE PAYPAL PAYMENT OPTION WITH DEFAULT PAYPAL PAYMENT OR USE CREDIT CARD
+ADD PAYPAL BUTTON
+PAYPAL CLIENT INTEGRATION - https://developer.paypal.com/demo/checkout/#/pattern/client
+PAYPAL SANDBOX TEST ACCOUNT - https://developer.paypal.com/developer/accounts/
+1. Go to checkout.html and replace the button text Make Payment using the Integration Client https://developer.paypal.com/demo/checkout/#/pattern/client
+        <div id="paypal-button-container"></div>
+   Next inside the script for now lets comment
+         // document.getElementById('make-payment').addEventListener('click', function(e){
+         //   submitFormData();
+         // });
+   Then add the paypal javascript see the link in step 1 above our script
+        <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+   Then add also the script for paypal button which also included in the link
+         <script>
+             // Render the PayPal button into #paypal-button-container
+             paypal.Buttons({
+                 // Set up the transaction
+                 createOrder: function(data, actions) {
+                     return actions.order.create({
+                         purchase_units: [{
+                             amount: {
+                                 value: '88.44'
+                             }
+                         }]
+                     });
+                 },
+                 // Finalize the transaction
+                 onApprove: function(data, actions) {
+                     return actions.order.capture().then(function(details) {
+                         // Show a success message to the buyer
+                         alert('Transaction completed by ' + details.payer.name.given_name + '!');
+                     });
+                 }
+             }).render('#paypal-button-container');
+         </script>
+   Using the paypal test account you can login and test the button
+STYLING THE BUTTON
+PAYPAL CUSTOMIZE - https://developer.paypal.com/docs/archive/checkout/how-to/customize-button/
+2. Using the paypal customize link for reference
+   Inside the paypal.Buttons you can add style for button
+         style:{
+           color: 'blue',
+           shape: 'rect',
+         },
+3. Create a personal and business account in paypal sandobx test account
+   Next in the DASHBOARD on the left click My Apps & Credential then click Create App
+   After creating the test app copy its client-id then got to paypal script and paste it
+   app test id - AdQTPdlVt2DEm8orH5SVWksQs4jMxYh9i_qoNXPXKLzz5-4KvbCooFkBuHsWhFLY1N_w03FpyTl9qmnl
+        <script src="https://www.paypal.com/sdk/js?client-id=AdQTPdlVt2DEm8orH5SVWksQs4jMxYh9i_qoNXPXKLzz5-4KvbCooFkBuHsWhFLY1N_w03FpyTl9qmnl&currency=USD"></script>
+   Now the test account is connected to your app
+SETTING THE PRICE   
+4. Change the default amount value send by paypal button
+   Go to our script and cut the var total and place it above the paypal.button
+        var total = '{{order.get_cart_total}}'
+   Then change the value
+        value: parseFloat(total).toFixed(2)
+PROCESS THE ORDER TO CLEAR THE CART AND PLACE THE ORDER IN THE BACKEND
+5. Copy the commented function submitFormData and replace it to the paypal button onApprove alert
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                // Show a success message to the buyer
+                submitFormData();
+            });
+        }
+NOTE FOR THE CREDITCARD TO WORK YOUR WEBSITE NEED TO BE SSL CERTIFIED
